@@ -1,0 +1,14 @@
+note <- sprintf("R package version %s", meta$Version)
+
+bibentry(bibtype = "Article",
+         title = "FairSubset: A tool to choose representative subsets of data for use with replicates or groups of different sample sizes",
+         author = c(person("Katherine", "Ortell"),
+                    person("Pawel", "Switonski"),
+                    person("Joe", "Delaney")),
+	 journal = "Journal of Biological Methods",
+	 volume = 6,
+	 pages = "e118",
+	 doi = "10.14440/jbm.2019.299",
+         year = 2019,
+         note = note,
+         url = "http://www.jbmethods.org/jbm/article/view/299/264")

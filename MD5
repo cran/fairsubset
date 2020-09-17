@@ -1,0 +1,10 @@
+8834974231b145593cd4f6c993dcd6d9 *DESCRIPTION
+313c4bde1dcc74f9883d543a621589a3 *NAMESPACE
+b40509740fcf38bd84d783e26b105c1a *R/fairsubset.R
+69ce49dfced4bc75668d616764ca5992 *build/vignette.rds
+4065d1b75f85b1fac46648a6bcea9491 *inst/CITATION
+ca68f57679f4c7b7e125edc4329cd399 *inst/doc/introduction.R
+6c9f7fc7acaa18fa37a4fb3b55fd42ae *inst/doc/introduction.Rmd
+a2ec429859c4e7e502d546efd6805950 *inst/doc/introduction.html
+2e04fbb178aa6cba18d30c78e29af83f *man/fairsubset.Rd
+6c9f7fc7acaa18fa37a4fb3b55fd42ae *vignettes/introduction.Rmd

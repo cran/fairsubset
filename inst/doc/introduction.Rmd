@@ -1,0 +1,91 @@
+---
+title: "fairsubset"
+description: >
+  Allows user to obtain subsets of columns of data or vectors within a list.  These subsets will match the original data in terms of average and variation, but have a consistent length of data per column.  It is intended for use on automated data generation which may not always output the same N per replicate or sample.
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{fairsubset}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Modern scientific methods can be automated and produce disparate samples sizes. In many cases, it is desirable to retain identical or pre-defined sample sizes between replicates or groups. However, choosing which subset of originally acquired data that best matches the entirety of the data set without introducing bias is not trivial.
+
+The fairsubset() function automates the choice of subsets. Choices which alter the definition of the "best" subset choice are built into the function. These choices fit many types of scientific data.
+
+For subset_setting = "mean" or "median" :
+The fairsubset$best_subset will have the closest average and standard deviation (equally weighted) to the original data.
+
+For subset_setting = "ks" :
+The fairsubset$best_subset will have the maximal P-value given by ks.test, relative to the original data.
+
+In this vignette, we discuss how to appropriately use fairsubset using these choices.
+
+```{r setup}
+library(fairsubset)
+```
+
+##Normally distributed data
+If you expect your data to have standard Gaussian curve distribution, subset_setting = "mean" or subset_setting = "median" makes sense to use.
+
+```{r}
+#Create normally distributed data
+input_list <- list(a= stats::rnorm(100, mean = 3, sd = 2),
+b = stats::rnorm(50, mean = 5, sd = 5),
+c= stats::rnorm(75, mean = 2, sd = 0.5))
+
+#Run fairsubset, using "mean" as the averaging choice
+output <- fairSubset(input_list, subset_setting = "mean", manual_N = 10, random_subsets = 1000)
+
+#Print the report, which describes best and worst subset features
+output$report
+
+```
+
+##Bimodal or skewed data
+In cases which may have non-normal distributions, such as bimodal or skewed data, subset_setting = "ks" makes sense to use. This can also be used for normally distributed data, or when the distribution is unknown. Unknown distributions are most often the case for automated methods of data acquisition, so this setting is most broadly useful.
+
+```{r}
+#Create bimodal distributed data
+input_list <- list(a= c( stats::rnorm(100, mean = 3, sd = 2)
+                        ,stats::rnorm(100, mean = 5, sd = 4) ),
+b = c( stats::rnorm(50, mean = 5, sd = 5)
+      ,stats::rnorm(50, mean = 2, sd = 1)),
+#Create skewed data
+c= stats::rnbinom(75, 10, .5))
+
+#Run fairsubset, using "ks" to enable ks.test metrics to decide the best subset
+output <- fairSubset(input_list, subset_setting = "ks", manual_N = 10, random_subsets = 1000)
+
+#Print the report, which describes best and worst subset features
+output$report
+
+```
+
+##Allow an automatic determination of the largest sample size
+Since automated data acquisition will produce an unknown sample size, it may be desireable to always choose the largest subset possible. This will be the number equivalent to the smallest sample from input columns.
+
+```{r}
+#Run fairsubset, using manual_N = NULL to default to largest possible subsets consistent between all samples
+output <- fairSubset(input_list, subset_setting = "ks", manual_N = NULL, random_subsets = 1000)
+
+#Print the size of the largest possible consistent N subset
+nrow(output$best_subset)
+
+#Evidently, sample c the lowest number of observed events, so fairsubset chose N = 75 for all subsets. Note that the "best_subset" using this setting retains the original set of data for the smallest sample (ie, output$best_subset$c is the same as input_list$c, just shuffled)
+```
+
+Fairsubset allows these random choices to best fit the original data. The worst subset demonstrates the worst-case scenario which could happen from a simple single random pick of data.
+
+For further examples using real-life scientific examples, please refer to the original publication:
+https://pubmed.ncbi.nlm.nih.gov/31583263/
+FairSubset: A tool to choose representative subsets of data for use with replicates or groups of different sample sizes
+
+Please cite fairsubset when you have used it. We appreciate your time to do so!
